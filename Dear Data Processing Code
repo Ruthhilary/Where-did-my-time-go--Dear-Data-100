@@ -1,4 +1,5 @@
-String[] moods = {
+
+String[] observations = {
   "Orange", "Purple", "Orange", "Orange", "Green",
   "Green", "Purple", "Purple", "Red", "Orange",
   "Orange", "Green", "Green", "Purple", "Purple",
@@ -46,21 +47,21 @@ void draw() {
 
   drawBackground();
 
-  // Heading
+  // Project heading
   fill(245);
   textAlign(LEFT);
   textSize(30);
-  text("MOOD IN MOTION", 45, 55);
+  text("WHERE DID MY TIME GO?", 45, 55);
 
   fill(145, 158, 180);
   textSize(13);
-  text("100 observations | A moving picture of everyday life", 47, 82);
+  text("100 observations | A visualisation of my daily time", 47, 82);
 
-  drawLegend();
+  drawActivityLegend();
   drawRoutes();
 
   // Draw all 100 moving observations
-  for (int i = 0; i < moods.length; i++) {
+  for (int i = 0; i < observations.length; i++) {
     drawParticle(i);
   }
 
@@ -134,7 +135,7 @@ void drawStation(float x, float y) {
   ellipse(x, y, 7, 7);
 }
 
-// Draw an individual moving particle
+// Draw an individual moving observation
 void drawParticle(int i) {
 
   int route = i % 4;
@@ -162,7 +163,7 @@ void drawParticle(int i) {
   particleX[i] = x;
   particleY[i] = y;
 
-  color c = moodColour(moods[i]);
+  color c = activityColour(observations[i]);
 
   // Particle trail
   for (int j = 8; j >= 1; j--) {
@@ -195,7 +196,7 @@ void drawParticle(int i) {
     ellipse(trailX, trailY, 5, 5);
   }
 
-  // Highlight selected particle
+  // Highlight selected observation
   if (i == selectedDot) {
 
     noStroke();
@@ -218,7 +219,7 @@ void drawParticle(int i) {
   ellipse(x, y, 9, 9);
 }
 
-// Mood information
+// Selected observation information
 void drawInformation() {
 
   fill(230);
@@ -227,13 +228,13 @@ void drawInformation() {
   textSize(15);
   text("SELECTED OBSERVATION", 45, 625);
 
-  fill(moodColour(moods[selectedDot]));
+  fill(activityColour(observations[selectedDot]));
   textSize(27);
   text("#" + (selectedDot + 1), 45, 660);
 
   fill(230);
   textSize(14);
-  text("Mood: " + moods[selectedDot], 150, 655);
+  text("Activity: " + observations[selectedDot], 150, 655);
 
   fill(145, 158, 180);
   textSize(12);
@@ -241,36 +242,36 @@ void drawInformation() {
   text("Y: Pause / Resume animation", 440, 662);
 }
 
-// Mood legend
-void drawLegend() {
+// Activity legend
+void drawActivityLegend() {
 
-  String[] colours = {
+  String[] activities = {
     "Red", "Orange", "Green", "Purple"
   };
 
-  for (int i = 0; i < colours.length; i++) {
+  for (int i = 0; i < activities.length; i++) {
 
     float x = 45 + i * 145;
 
     noStroke();
-    fill(moodColour(colours[i]));
+    fill(activityColour(activities[i]));
     ellipse(x, 115, 11, 11);
 
     fill(200, 210, 225);
     textSize(12);
     textAlign(LEFT);
-    text(colours[i], x + 15, 119);
+    text(activities[i], x + 15, 119);
   }
 }
 
-// Mood colour selection
-color moodColour(String mood) {
+// Activity colour selection
+color activityColour(String activity) {
 
-  if (mood.equals("Red")) {
+  if (activity.equals("Red")) {
     return color(204, 78, 72);
-  } else if (mood.equals("Orange")) {
+  } else if (activity.equals("Orange")) {
     return color(235, 145, 68);
-  } else if (mood.equals("Green")) {
+  } else if (activity.equals("Green")) {
     return color(105, 157, 112);
   } else {
     return color(145, 112, 181);
@@ -284,7 +285,7 @@ void keyPressed() {
 
     selectedDot++;
 
-    if (selectedDot >= moods.length) {
+    if (selectedDot >= observations.length) {
       selectedDot = 0;
     }
   }
@@ -294,7 +295,7 @@ void keyPressed() {
     selectedDot--;
 
     if (selectedDot < 0) {
-      selectedDot = moods.length - 1;
+      selectedDot = observations.length - 1;
     }
   }
 
@@ -308,7 +309,7 @@ void mousePressed() {
 
   float closestDistance = 25;
 
-  for (int i = 0; i < moods.length; i++) {
+  for (int i = 0; i < observations.length; i++) {
 
     float distance = dist(
       mouseX, mouseY,
