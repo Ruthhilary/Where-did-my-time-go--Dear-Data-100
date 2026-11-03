@@ -1,0 +1,323 @@
+String[] moods = {
+  "Orange", "Purple", "Orange", "Orange", "Green",
+  "Green", "Purple", "Purple", "Red", "Orange",
+  "Orange", "Green", "Green", "Purple", "Purple",
+  "Purple", "Red", "Red", "Orange", "Orange",
+  "Green", "Green", "Purple", "Orange", "Orange",
+  "Green", "Purple", "Purple", "Purple", "Orange",
+  "Green", "Orange", "Green", "Green", "Purple",
+  "Orange", "Orange", "Purple", "Green", "Green",
+  "Green", "Orange", "Purple", "Green", "Purple",
+  "Purple", "Orange", "Purple", "Purple", "Orange",
+  "Green", "Purple", "Orange", "Orange", "Green",
+  "Red", "Red", "Orange", "Purple", "Orange",
+  "Orange", "Green", "Purple", "Orange", "Green",
+  "Green", "Purple", "Green", "Green", "Orange",
+  "Purple", "Green", "Purple", "Orange", "Orange",
+  "Purple", "Purple", "Green", "Orange", "Purple",
+  "Green", "Green", "Orange", "Purple", "Purple",
+  "Orange", "Green", "Red", "Red", "Orange",
+  "Purple", "Red", "Orange", "Orange", "Green",
+  "Orange", "Green", "Green", "Purple", "Orange"
+};
+
+int selectedDot = 0;
+
+float animationTime = 0;
+
+boolean playing = true;
+
+float[] particleX = new float[100];
+float[] particleY = new float[100];
+
+void setup() {
+  size(900, 700);
+  smooth();
+  frameRate(60);
+}
+
+void draw() {
+
+  background(9, 15, 29);
+
+  if (playing) {
+    animationTime += 1;
+  }
+
+  drawBackground();
+
+  // Heading
+  fill(245);
+  textAlign(LEFT);
+  textSize(30);
+  text("MOOD IN MOTION", 45, 55);
+
+  fill(145, 158, 180);
+  textSize(13);
+  text("100 observations | A moving picture of everyday life", 47, 82);
+
+  drawLegend();
+  drawRoutes();
+
+  // Draw all 100 moving observations
+  for (int i = 0; i < moods.length; i++) {
+    drawParticle(i);
+  }
+
+  drawInformation();
+
+  // Animation status
+  textAlign(RIGHT);
+  textSize(12);
+
+  if (playing) {
+    fill(105, 220, 150);
+    text("● LIVE ANIMATION", 850, 55);
+  } else {
+    fill(235, 145, 68);
+    text("● PAUSED", 850, 55);
+  }
+}
+
+// Background decoration
+void drawBackground() {
+
+  noStroke();
+
+  for (int i = 0; i < 35; i++) {
+
+    float x = (i * 83) % width;
+    float y = (i * 137) % height;
+
+    fill(100, 130, 180, 25);
+    ellipse(x, y, 3, 3);
+  }
+}
+
+// Draw the four flowing pathways
+void drawRoutes() {
+
+  noFill();
+  strokeWeight(2);
+
+  stroke(65, 90, 125, 65);
+  bezier(60, 210, 260, 80, 600, 330, 840, 170);
+
+  bezier(60, 310, 300, 500, 580, 100, 840, 330);
+
+  bezier(60, 440, 250, 250, 650, 570, 840, 450);
+
+  bezier(60, 550, 300, 650, 580, 300, 840, 570);
+
+  drawStation(60, 210);
+  drawStation(840, 170);
+
+  drawStation(60, 310);
+  drawStation(840, 330);
+
+  drawStation(60, 440);
+  drawStation(840, 450);
+
+  drawStation(60, 550);
+  drawStation(840, 570);
+}
+
+// Draw pathway stations
+void drawStation(float x, float y) {
+
+  noStroke();
+
+  fill(180, 200, 230, 35);
+  ellipse(x, y, 25, 25);
+
+  fill(210, 225, 245);
+  ellipse(x, y, 7, 7);
+}
+
+// Draw an individual moving particle
+void drawParticle(int i) {
+
+  int route = i % 4;
+
+  float progress = (animationTime * 0.0025
+                    + i * 0.071) % 1;
+
+  float x = 0;
+  float y = 0;
+
+  if (route == 0) {
+    x = bezierPoint(60, 260, 600, 840, progress);
+    y = bezierPoint(210, 80, 330, 170, progress);
+  } else if (route == 1) {
+    x = bezierPoint(60, 300, 580, 840, progress);
+    y = bezierPoint(310, 500, 100, 330, progress);
+  } else if (route == 2) {
+    x = bezierPoint(60, 250, 650, 840, progress);
+    y = bezierPoint(440, 250, 570, 450, progress);
+  } else {
+    x = bezierPoint(60, 300, 580, 840, progress);
+    y = bezierPoint(550, 650, 300, 570, progress);
+  }
+
+  particleX[i] = x;
+  particleY[i] = y;
+
+  color c = moodColour(moods[i]);
+
+  // Particle trail
+  for (int j = 8; j >= 1; j--) {
+
+    float trailProgress = progress - j * 0.009;
+
+    if (trailProgress < 0) {
+      trailProgress += 1;
+    }
+
+    float trailX = 0;
+    float trailY = 0;
+
+    if (route == 0) {
+      trailX = bezierPoint(60, 260, 600, 840, trailProgress);
+      trailY = bezierPoint(210, 80, 330, 170, trailProgress);
+    } else if (route == 1) {
+      trailX = bezierPoint(60, 300, 580, 840, trailProgress);
+      trailY = bezierPoint(310, 500, 100, 330, trailProgress);
+    } else if (route == 2) {
+      trailX = bezierPoint(60, 250, 650, 840, trailProgress);
+      trailY = bezierPoint(440, 250, 570, 450, trailProgress);
+    } else {
+      trailX = bezierPoint(60, 300, 580, 840, trailProgress);
+      trailY = bezierPoint(550, 650, 300, 570, trailProgress);
+    }
+
+    noStroke();
+    fill(c, 12 + j * 3);
+    ellipse(trailX, trailY, 5, 5);
+  }
+
+  // Highlight selected particle
+  if (i == selectedDot) {
+
+    noStroke();
+    fill(c, 45);
+    ellipse(x, y, 38, 38);
+
+    stroke(255);
+    strokeWeight(2);
+    noFill();
+    ellipse(x, y, 20, 20);
+  }
+
+  // Main particle
+  noStroke();
+
+  fill(c, 45);
+  ellipse(x, y, 24, 24);
+
+  fill(c);
+  ellipse(x, y, 9, 9);
+}
+
+// Mood information
+void drawInformation() {
+
+  fill(230);
+  textAlign(LEFT);
+
+  textSize(15);
+  text("SELECTED OBSERVATION", 45, 625);
+
+  fill(moodColour(moods[selectedDot]));
+  textSize(27);
+  text("#" + (selectedDot + 1), 45, 660);
+
+  fill(230);
+  textSize(14);
+  text("Mood: " + moods[selectedDot], 150, 655);
+
+  fill(145, 158, 180);
+  textSize(12);
+  text("LEFT / RIGHT: Explore observations", 440, 640);
+  text("Y: Pause / Resume animation", 440, 662);
+}
+
+// Mood legend
+void drawLegend() {
+
+  String[] colours = {
+    "Red", "Orange", "Green", "Purple"
+  };
+
+  for (int i = 0; i < colours.length; i++) {
+
+    float x = 45 + i * 145;
+
+    noStroke();
+    fill(moodColour(colours[i]));
+    ellipse(x, 115, 11, 11);
+
+    fill(200, 210, 225);
+    textSize(12);
+    textAlign(LEFT);
+    text(colours[i], x + 15, 119);
+  }
+}
+
+// Mood colour selection
+color moodColour(String mood) {
+
+  if (mood.equals("Red")) {
+    return color(204, 78, 72);
+  } else if (mood.equals("Orange")) {
+    return color(235, 145, 68);
+  } else if (mood.equals("Green")) {
+    return color(105, 157, 112);
+  } else {
+    return color(145, 112, 181);
+  }
+}
+
+// Keyboard controls
+void keyPressed() {
+
+  if (keyCode == RIGHT) {
+
+    selectedDot++;
+
+    if (selectedDot >= moods.length) {
+      selectedDot = 0;
+    }
+  }
+
+  if (keyCode == LEFT) {
+
+    selectedDot--;
+
+    if (selectedDot < 0) {
+      selectedDot = moods.length - 1;
+    }
+  }
+
+  if (key == 'y' || key == 'Y') {
+    playing = !playing;
+  }
+}
+
+// Mouse selection
+void mousePressed() {
+
+  float closestDistance = 25;
+
+  for (int i = 0; i < moods.length; i++) {
+
+    float distance = dist(
+      mouseX, mouseY,
+      particleX[i], particleY[i]
+    );
+
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      selectedDot = i;
+    }
+  }
+}
