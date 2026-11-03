@@ -23,7 +23,7 @@
 We measure our lives in minutes, hours, and days. But our experience of time rarely feels so precise.
 
 A difficult task can feel endless. An enjoyable conversation can disappear in seconds. Waiting five minutes can feel different from spending five minutes doing something we love.
-![Uploading Screenshot 2026-11-03 at 13.17.59.png…]()
+
 
 **Where Did My Time Go?** investigates the distance between the time an activity actually takes and the time it feels like it takes.
 
